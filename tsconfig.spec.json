@@ -3,9 +3,14 @@
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "types": [
+      "jest",
+      "jquery",
+      "jsdom",
       "jasmine",
       "node"
-    ]
+    ],
+    "module": "commonjs",
+    "allowJs": true,
   },
   "files": [
     "src/test.ts",
