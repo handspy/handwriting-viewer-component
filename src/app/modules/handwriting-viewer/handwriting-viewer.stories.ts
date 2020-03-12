@@ -1,7 +1,7 @@
 import {withKnobs, boolean, number, color} from '@storybook/addon-knobs';
 
-import {HandwritingViewerComponent} from '../handwriting-viewer/handwriting-viewer.component';
-import {IPage} from '../handwriting-viewer/models/page.interface';
+import {HandwritingViewerComponent} from './handwriting-viewer.component';
+import {IPage} from './models/page.interface';
 
 export default {
   title: 'Handwriting Viewer',
@@ -9,7 +9,7 @@ export default {
   decorators: [withKnobs]
 };
 
-const fullpage = require('../assets/page.json');
+const fullpage = require('../../../assets/page.json');
 
 const data: IPage = {
   width: 300,

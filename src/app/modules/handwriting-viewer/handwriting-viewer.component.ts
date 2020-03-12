@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 
 import {Circle, G, Path, Svg, SVG, Timeline} from '@svgdotjs/svg.js';
 import '@svgdotjs/svg.panzoom.js';
@@ -12,7 +12,7 @@ import {IDot} from './models/dot.interface';
   templateUrl: './handwriting-viewer.component.html',
   styleUrls: ['./handwriting-viewer.component.scss']
 })
-export class HandwritingViewerComponent implements OnInit, AfterViewInit, OnChanges {
+export class HandwritingViewerComponent implements OnInit, AfterViewInit {
 
   private _data: IPage;
 
@@ -59,9 +59,6 @@ export class HandwritingViewerComponent implements OnInit, AfterViewInit, OnChan
     this.timeline.stop();
 
     this.initialized = true;
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
   }
 
   /* Input handling */
