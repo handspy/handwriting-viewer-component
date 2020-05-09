@@ -1,11 +1,8 @@
-import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 
 import {Circle, G, Path, Svg, SVG, Timeline} from '@svgdotjs/svg.js';
 import '@svgdotjs/svg.panzoom.js';
 
-import {IPage} from './models/page.interface';
-import {IStroke} from './models/stroke.interface';
-import {IDot} from './models/dot.interface';
 
 @Component({
   selector: 'hs-handwriting-viewer',
@@ -14,7 +11,7 @@ import {IDot} from './models/dot.interface';
 })
 export class HandwritingViewerComponent implements OnInit, AfterViewInit {
 
-  private _data: IPage;
+  private _data: any;
 
   // animation state
   private _paused = false;
@@ -51,6 +48,11 @@ export class HandwritingViewerComponent implements OnInit, AfterViewInit {
 
     this.draw = SVG().addTo(this.canvas.nativeElement)
       .panZoom({ zoomMin: 0.5, zoomMax: 100 });
+
+    /*this.draw.dblclick((e) => {
+      const p = this.draw.point(e.pageX, e.pageY);
+      this.draw.zoom(this.draw.zoom(), p);
+    });*/
 
     if (this.data) {
       this.buildHandwritingSvg();
@@ -166,8 +168,6 @@ export class HandwritingViewerComponent implements OnInit, AfterViewInit {
       return; // no data
     }
 
-    console.log('building SVG ...');
-
     this.draw.clear();
 
     this.draw.viewbox(0, 0, this.data.width, this.data.height);
@@ -198,18 +198,20 @@ export class HandwritingViewerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private createStrokePath(index: number, stroke: IStroke): Path {
+  private createStrokePath(index: number, stroke: any): Path {
 
     const pathId = `p${index}`;
 
     const pathStr = 'M' + stroke.dots.map(dot => `${dot.x} ${dot.y}`).join(',');
 
+    const avgPressure = stroke.dots.reduce((p, c) => (p + (c.pressure || 0.5)), 0) / stroke.dots.length;
+
     const path = this.draw.path(pathStr)
       .attr({
         id: pathId,
         stroke: 'currentColor',
-        'stroke-width': 56 / 600,
-        'shape-rendering': 'geometricPrecision',
+        'stroke-width': avgPressure,
+        'shape-rendering': 'geometricPrecision', // 'optimizeSpeed',
         'stroke-linejoin': 'round',
         'stroke-linecap': 'round'
       })
@@ -236,7 +238,7 @@ export class HandwritingViewerComponent implements OnInit, AfterViewInit {
     return path;
   }
 
-  private createDotGroup(pathId: string, stroke: IStroke): G {
+  private createDotGroup(pathId: string, stroke: any): G {
 
     // create group
     const group: G = this.draw
@@ -258,14 +260,14 @@ export class HandwritingViewerComponent implements OnInit, AfterViewInit {
     return group;
   }
 
-  private createDotCircle(group: G, dot: IDot): Circle {
+  private createDotCircle(group: G, dot: any): Circle {
     return group
-      .circle(2 * 56 / 600)
+      .circle(1.5 * (dot.pressure > 0 ? dot.pressure : 0.5))
       .center(dot.x, dot.y)
       .fill('currentColor')
       .stroke({
         color: 'currentColor',
-        width: 0.5 * 56 / 600
+        width: 0.1 * (dot.pressure > 0 ? dot.pressure : 0.5)
       })
       .attr({
         'fill-opacity': '50%'
